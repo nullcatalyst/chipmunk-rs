@@ -1,0 +1,36 @@
+[package]
+authors = [
+  "Scott Lembcke <slembcke@gmail.com>",
+  "Scott Bennett <scottbennett912@gmail.com>",
+]
+categories = ["physics", "api-bindings", "game-engines"]
+description = "Chipmunk Physics bindings for Rust"
+keywords = ["chipmunk", "physics", "api", "engine"]
+license = "MIT"
+name = "chipmunk"
+repository = "https://github.com/nullcatalyst/chipmunk-rs"
+version = "7.0.2"
+
+[lib]
+name = "chipmunk"
+path = "src/chipmunk/lib.rs"
+
+[dependencies]
+
+[dependencies.chipmunk-sys]
+path = "chipmunk-sys"
+version = "^7.0.2"
+
+[features]
+default = []
+static-link = ["chipmunk-sys/static-link"]
+use-bindgen = ["chipmunk-sys/use-bindgen"]
+use-vcpkg = ["chipmunk-sys/use-vcpkg"]
+
+[package.metadata.vcpkg]
+dependencies = ["chipmunk"]
+git = "https://github.com/nullcatalyst/vcpkg"
+rev = "26d8456ae5422a186c5e193ceba91d6fd274fd3d"
+
+[package.metadata.vcpkg.target]
+x86_64-pc-windows-msvc = {triplet = "x64-windows-static-md"}
