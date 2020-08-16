@@ -30,11 +30,3 @@ default = []
 static-link = []
 use-bindgen = ["bindgen"]
 use-vcpkg = ["vcpkg"]
-
-[package.metadata.vcpkg]
-dependencies = ["chipmunk"]
-git = "https://github.com/nullcatalyst/vcpkg"
-rev = "2c340e3255154ca20276b8636964d11b865f0cbf"
-
-[package.metadata.vcpkg.target]
-x86_64-pc-windows-msvc = {triplet = "x64-windows-static-md"}
