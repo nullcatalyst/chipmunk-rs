@@ -9,11 +9,10 @@ keywords = ["chipmunk", "physics", "api", "engine"]
 license = "MIT"
 name = "chipmunk-sys"
 repository = "https://github.com/nullcatalyst/chipmunk-rs"
-version = "7.0.2"
+version = "0.1.0"
 
 [lib]
 name = "chipmunk_sys"
-path = "src/lib.rs"
 
 [dependencies]
 libc = "^0.2"
@@ -26,10 +25,6 @@ version = "^0.53"
 optional = true
 version = "^0.2.10"
 
-# [build-dependencies]
-# cfg-if = "^0.1"
-# version-compare = "0.0.10"
-
 [features]
 default = []
 static-link = []
@@ -39,7 +34,7 @@ use-vcpkg = ["vcpkg"]
 [package.metadata.vcpkg]
 dependencies = ["chipmunk"]
 git = "https://github.com/nullcatalyst/vcpkg"
-rev = "26d8456ae5422a186c5e193ceba91d6fd274fd3d"
+rev = "2c340e3255154ca20276b8636964d11b865f0cbf"
 
 [package.metadata.vcpkg.target]
 x86_64-pc-windows-msvc = {triplet = "x64-windows-static-md"}
