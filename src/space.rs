@@ -1,6 +1,6 @@
 extern crate chipmunk_sys as sys;
 
-use crate::Body;
+use crate::{Body, Shape};
 use std::ffi;
 
 pub struct Space(*mut sys::cpSpace);
@@ -140,12 +140,12 @@ impl Space {
 
     /// Add a collision shape to the simulation.
     /// If the shape is attached to a static body, it will be added as a static shape.
-    pub fn add_shape(&mut self, shape: *mut sys::cpShape) {
-        unsafe { sys::cpSpaceAddShape(self.0, shape) };
+    pub fn add_shape(&mut self, shape: &Shape) {
+        unsafe { sys::cpSpaceAddShape(self.0, shape.0) };
     }
     /// Add a rigid body to the simulation.
-    pub fn add_body(&mut self, body: *mut sys::cpBody) {
-        unsafe { sys::cpSpaceAddBody(self.0, body) };
+    pub fn add_body(&mut self, body: &Body) {
+        unsafe { sys::cpSpaceAddBody(self.0, body.0) };
     }
 
     /// Add a constraint to the simulation.
