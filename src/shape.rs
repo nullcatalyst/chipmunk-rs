@@ -3,14 +3,17 @@ extern crate chipmunk_sys as sys;
 use crate::Body;
 use std::ffi;
 
-pub struct Shape(pub *mut sys::cpShape);
+pub struct Shape(pub *mut sys::cpShape, pub bool);
 
 unsafe impl Send for Shape {}
 
 impl Shape {
     /// Allocate and initialize a circle shape.
     pub fn circle(body: &Body, radius: f64, offset: sys::cpVect) -> Shape {
-        Shape(unsafe { sys::cpCircleShapeNew(body.0, radius, offset) })
+        Shape(
+            unsafe { sys::cpCircleShapeNew(body.0, radius, offset) },
+            true,
+        )
     }
 
     /// Get the radius of a circle shape.
@@ -25,7 +28,10 @@ impl Shape {
 
     /// Allocate and initialize a segment shape.
     pub fn segment(body: &Body, a: sys::cpVect, b: sys::cpVect, radius: f64) -> Shape {
-        Shape(unsafe { sys::cpSegmentShapeNew(body.0, a, b, radius) })
+        Shape(
+            unsafe { sys::cpSegmentShapeNew(body.0, a, b, radius) },
+            true,
+        )
     }
 
     /// Get the first endpoint of a segment shape.
@@ -50,13 +56,19 @@ impl Shape {
 
     /// Allocate and initialize a box shaped polygon shape.
     pub fn poly_box(body: &Body, width: f64, height: f64, radius: f64) -> Shape {
-        Shape(unsafe { sys::cpBoxShapeNew(body.0, width, height, radius) })
+        Shape(
+            unsafe { sys::cpBoxShapeNew(body.0, width, height, radius) },
+            true,
+        )
     }
 
     /// Allocate and initialize a polygon shape with rounded corners.
     /// The vertexes must be convex with a counter-clockwise winding.
     pub fn poly(body: &Body, verts: &[sys::cpVect], radius: f64) -> Shape {
-        Shape(unsafe { sys::cpPolyShapeNewRaw(body.0, verts.len() as i32, verts.as_ptr(), radius) })
+        Shape(
+            unsafe { sys::cpPolyShapeNewRaw(body.0, verts.len() as i32, verts.as_ptr(), radius) },
+            true,
+        )
     }
 
     // /// The cpSpace this body is added to.
@@ -169,8 +181,8 @@ impl Shape {
 
 impl Drop for Shape {
     fn drop(&mut self) {
-        unsafe {
-            sys::cpShapeFree(self.0);
+        if self.1 {
+            unsafe { sys::cpShapeFree(self.0) };
         }
     }
 }

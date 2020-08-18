@@ -3,13 +3,13 @@ extern crate chipmunk_sys as sys;
 use crate::{Body, Shape};
 use std::ffi;
 
-pub struct Space(pub *mut sys::cpSpace);
+pub struct Space(pub *mut sys::cpSpace, pub bool);
 
 unsafe impl Send for Space {}
 
 impl Space {
     pub fn new() -> Space {
-        Space(unsafe { sys::cpSpaceNew() })
+        Space(unsafe { sys::cpSpaceNew() }, true)
     }
 
     //MARK: Properties
@@ -111,8 +111,8 @@ impl Space {
 
     /// The Space provided static body for a given cpSpace.
     /// This is merely provided for convenience and you are not required to use it.
-    pub fn static_body(&self) -> *mut sys::cpBody {
-        unsafe { sys::cpSpaceGetStaticBody(self.0) }
+    pub fn static_body(&self) -> Body {
+        Body(unsafe { sys::cpSpaceGetStaticBody(self.0) }, false)
     }
 
     /// Returns the current (or most recent) time step used with the given space.
@@ -143,6 +143,7 @@ impl Space {
     pub fn add_shape(&mut self, shape: &Shape) {
         unsafe { sys::cpSpaceAddShape(self.0, shape.0) };
     }
+
     /// Add a rigid body to the simulation.
     pub fn add_body(&mut self, body: &Body) {
         unsafe { sys::cpSpaceAddBody(self.0, body.0) };
@@ -168,10 +169,16 @@ impl Space {
         unsafe { sys::cpSpaceRemoveConstraint(self.0, constraint) };
     }
 
-    // /// Test if a collision shape has been added to the space.
-    // CP_EXPORT cpBool cpSpaceContainsShape(cpSpace *space, cpShape *shape);
-    // /// Test if a rigid body has been added to the space.
-    // CP_EXPORT cpBool cpSpaceContainsBody(cpSpace *space, cpBody *body);
+    /// Test if a collision shape has been added to the space.
+    pub fn contains_shape(&self, shape: &Shape) -> bool {
+        unsafe { sys::cpSpaceContainsShape(self.0, shape.0) != 0 }
+    }
+
+    /// Test if a rigid body has been added to the space.
+    pub fn contains_body(&self, body: &Body) -> bool {
+        unsafe { sys::cpSpaceContainsBody(self.0, body.0) != 0 }
+    }
+
     // /// Test if a constraint has been added to the space.
     // CP_EXPORT cpBool cpSpaceContainsConstraint(cpSpace *space, cpConstraint *constraint);
 
@@ -254,8 +261,8 @@ impl Space {
 
 impl Drop for Space {
     fn drop(&mut self) {
-        unsafe {
-            sys::cpSpaceFree(self.0);
+        if self.1 {
+            unsafe { sys::cpSpaceFree(self.0) };
         }
     }
 }

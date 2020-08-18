@@ -2,21 +2,21 @@ extern crate chipmunk_sys as sys;
 
 use std::ffi;
 
-pub struct Body(pub *mut sys::cpBody);
+pub struct Body(pub *mut sys::cpBody, pub bool);
 
 unsafe impl Send for Body {}
 
 impl Body {
     pub fn new(mass: f64, moment: f64) -> Body {
-        Body(unsafe { sys::cpBodyNew(mass, moment) })
+        Body(unsafe { sys::cpBodyNew(mass, moment) }, true)
     }
 
     pub fn new_kinematic() -> Body {
-        Body(unsafe { sys::cpBodyNewKinematic() })
+        Body(unsafe { sys::cpBodyNewKinematic() }, true)
     }
 
     pub fn new_static() -> Body {
-        Body(unsafe { sys::cpBodyNewStatic() })
+        Body(unsafe { sys::cpBodyNewStatic() }, true)
     }
 
     /// Wake up a sleeping or idle body.
@@ -205,8 +205,8 @@ impl Body {
 
 impl Drop for Body {
     fn drop(&mut self) {
-        unsafe {
-            sys::cpBodyFree(self.0);
+        if self.1 {
+            unsafe { sys::cpBodyFree(self.0) }
         }
     }
 }
