@@ -168,6 +168,7 @@ fn generate_bindings(target: &str, host: &str, headers_paths: &[String]) {
     let bindings = bindings
         .header("wrapper.h")
         .clang_arg("-DCP_USE_CGTYPES=0")
+        .clang_arg("-fno-blocks")
         .whitelist_type("cp.*")
         .whitelist_function("cp.*")
         .whitelist_var("CP_.*")

@@ -2,7 +2,7 @@ extern crate chipmunk_sys as sys;
 
 use std::ffi;
 
-pub struct Body(pub(crate) *mut sys::cpBody);
+pub struct Body(pub *mut sys::cpBody);
 
 unsafe impl Send for Body {}
 

@@ -3125,62 +3125,6 @@ extern "C" {
         tol: cpFloat,
     ) -> libc::c_int;
 }
-extern "C" {
-    pub fn cpSpaceEachBody_b(space: *mut cpSpace, block: *mut libc::c_void);
-}
-extern "C" {
-    pub fn cpSpaceEachShape_b(space: *mut cpSpace, block: *mut libc::c_void);
-}
-extern "C" {
-    pub fn cpSpaceEachConstraint_b(space: *mut cpSpace, block: *mut libc::c_void);
-}
-extern "C" {
-    pub fn cpBodyEachShape_b(body: *mut cpBody, block: *mut libc::c_void);
-}
-extern "C" {
-    pub fn cpBodyEachConstraint_b(body: *mut cpBody, block: *mut libc::c_void);
-}
-extern "C" {
-    pub fn cpBodyEachArbiter_b(body: *mut cpBody, block: *mut libc::c_void);
-}
-pub type cpSpacePointQueryBlock = *mut libc::c_void;
-extern "C" {
-    pub fn cpSpacePointQuery_b(
-        space: *mut cpSpace,
-        point: cpVect,
-        maxDistance: cpFloat,
-        filter: cpShapeFilter,
-        block: cpSpacePointQueryBlock,
-    );
-}
-pub type cpSpaceSegmentQueryBlock = *mut libc::c_void;
-extern "C" {
-    pub fn cpSpaceSegmentQuery_b(
-        space: *mut cpSpace,
-        start: cpVect,
-        end: cpVect,
-        radius: cpFloat,
-        filter: cpShapeFilter,
-        block: cpSpaceSegmentQueryBlock,
-    );
-}
-pub type cpSpaceBBQueryBlock = *mut libc::c_void;
-extern "C" {
-    pub fn cpSpaceBBQuery_b(
-        space: *mut cpSpace,
-        bb: cpBB,
-        filter: cpShapeFilter,
-        block: cpSpaceBBQueryBlock,
-    );
-}
-pub type cpSpaceShapeQueryBlock = *mut libc::c_void;
-extern "C" {
-    pub fn cpSpaceShapeQuery_b(
-        space: *mut cpSpace,
-        shape: *mut cpShape,
-        block: cpSpaceShapeQueryBlock,
-    ) -> cpBool;
-}
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct cpArray {

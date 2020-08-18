@@ -2,7 +2,7 @@ extern crate chipmunk_sys as sys;
 
 use crate::Body;
 
-pub struct Shape(pub(crate) *mut sys::cpShape);
+pub struct Shape(pub *mut sys::cpShape);
 
 unsafe impl Send for Shape {}
 

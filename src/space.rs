@@ -3,7 +3,7 @@ extern crate chipmunk_sys as sys;
 use crate::{Body, Shape};
 use std::ffi;
 
-pub struct Space(*mut sys::cpSpace);
+pub struct Space(pub *mut sys::cpSpace);
 
 unsafe impl Send for Space {}
 
@@ -111,8 +111,8 @@ impl Space {
 
     /// The Space provided static body for a given cpSpace.
     /// This is merely provided for convenience and you are not required to use it.
-    pub fn static_body(&self) -> Body {
-        Body(unsafe { sys::cpSpaceGetStaticBody(self.0) })
+    pub fn static_body(&self) -> *mut sys::cpBody {
+        unsafe { sys::cpSpaceGetStaticBody(self.0) }
     }
 
     /// Returns the current (or most recent) time step used with the given space.
