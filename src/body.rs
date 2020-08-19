@@ -1,5 +1,6 @@
 extern crate chipmunk_sys as sys;
 
+use crate::vect::*;
 use std::ffi;
 
 pub struct Body(pub *mut sys::cpBody, pub bool);
@@ -69,43 +70,43 @@ impl Body {
     }
 
     /// Set the position of a body.
-    pub fn position(&self) -> sys::cpVect {
-        unsafe { sys::cpBodyGetPosition(self.0) }
+    pub fn position(&self) -> Vect {
+        unsafe { sys::cpBodyGetPosition(self.0) }.into()
     }
 
     /// Set the position of the body.
-    pub fn set_position(&mut self, position: sys::cpVect) {
-        unsafe { sys::cpBodySetPosition(self.0, position) }
+    pub fn set_position(&mut self, position: Vect) {
+        unsafe { sys::cpBodySetPosition(self.0, position.0) }
     }
 
     /// Get the offset of the center of gravity in body local coordinates.
-    pub fn center_of_gravity(&self) -> sys::cpVect {
-        unsafe { sys::cpBodyGetCenterOfGravity(self.0) }
+    pub fn center_of_gravity(&self) -> Vect {
+        unsafe { sys::cpBodyGetCenterOfGravity(self.0) }.into()
     }
 
     /// Set the offset of the center of gravity in body local coordinates.
-    pub fn set_center_of_gravity(&mut self, center_of_gravity: sys::cpVect) {
-        unsafe { sys::cpBodySetCenterOfGravity(self.0, center_of_gravity) }
+    pub fn set_center_of_gravity(&mut self, center_of_gravity: Vect) {
+        unsafe { sys::cpBodySetCenterOfGravity(self.0, center_of_gravity.0) }
     }
 
     /// Get the velocity of the body.
-    pub fn velocity(&self) -> sys::cpVect {
-        unsafe { sys::cpBodyGetVelocity(self.0) }
+    pub fn velocity(&self) -> Vect {
+        unsafe { sys::cpBodyGetVelocity(self.0) }.into()
     }
 
     /// Set the velocity of the body.
-    pub fn set_velocity(&mut self, velocity: sys::cpVect) {
-        unsafe { sys::cpBodySetVelocity(self.0, velocity) }
+    pub fn set_velocity(&mut self, velocity: Vect) {
+        unsafe { sys::cpBodySetVelocity(self.0, velocity.0) }
     }
 
     /// Get the force applied to the body for the next time step.
-    pub fn force(&self) -> sys::cpVect {
-        unsafe { sys::cpBodyGetForce(self.0) }
+    pub fn force(&self) -> Vect {
+        unsafe { sys::cpBodyGetForce(self.0) }.into()
     }
 
     /// Set the force applied to the body for the next time step.
-    pub fn set_force(&mut self, force: sys::cpVect) {
-        unsafe { sys::cpBodySetForce(self.0, force) }
+    pub fn set_force(&mut self, force: Vect) {
+        unsafe { sys::cpBodySetForce(self.0, force.0) }
     }
 
     /// Get the angle of the body.
@@ -139,8 +140,8 @@ impl Body {
     }
 
     /// Get the rotation vector of the body. (The x basis vector of it's transform.)
-    pub fn rotation(&self) -> sys::cpVect {
-        unsafe { sys::cpBodyGetRotation(self.0) }
+    pub fn rotation(&self) -> Vect {
+        unsafe { sys::cpBodyGetRotation(self.0) }.into()
     }
 
     /// Get the user data pointer assigned to the body.

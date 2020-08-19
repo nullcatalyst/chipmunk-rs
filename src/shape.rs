@@ -1,5 +1,6 @@
 extern crate chipmunk_sys as sys;
 
+use crate::vect::*;
 use crate::Body;
 use std::ffi;
 
@@ -9,9 +10,9 @@ unsafe impl Send for Shape {}
 
 impl Shape {
     /// Allocate and initialize a circle shape.
-    pub fn circle(body: &Body, radius: f64, offset: sys::cpVect) -> Shape {
+    pub fn circle(body: &Body, radius: f64, offset: Vect) -> Shape {
         Shape(
-            unsafe { sys::cpCircleShapeNew(body.0, radius, offset) },
+            unsafe { sys::cpCircleShapeNew(body.0, radius, offset.0) },
             true,
         )
     }
@@ -22,26 +23,26 @@ impl Shape {
     }
 
     /// Get the offset of a circle shape.
-    pub fn circle_offset(&self) -> sys::cpVect {
-        unsafe { sys::cpCircleShapeGetOffset(self.0) }
+    pub fn circle_offset(&self) -> Vect {
+        unsafe { sys::cpCircleShapeGetOffset(self.0) }.into()
     }
 
     /// Allocate and initialize a segment shape.
-    pub fn segment(body: &Body, a: sys::cpVect, b: sys::cpVect, radius: f64) -> Shape {
+    pub fn segment(body: &Body, a: Vect, b: Vect, radius: f64) -> Shape {
         Shape(
-            unsafe { sys::cpSegmentShapeNew(body.0, a, b, radius) },
+            unsafe { sys::cpSegmentShapeNew(body.0, a.0, b.0, radius) },
             true,
         )
     }
 
     /// Get the first endpoint of a segment shape.
-    pub fn segment_a(&self) -> sys::cpVect {
-        unsafe { sys::cpSegmentShapeGetA(self.0) }
+    pub fn segment_a(&self) -> Vect {
+        unsafe { sys::cpSegmentShapeGetA(self.0) }.into()
     }
 
     /// Get the second endpoint of a segment shape.
-    pub fn segment_b(&self) -> sys::cpVect {
-        unsafe { sys::cpSegmentShapeGetB(self.0) }
+    pub fn segment_b(&self) -> Vect {
+        unsafe { sys::cpSegmentShapeGetB(self.0) }.into()
     }
 
     /// Get the first endpoint of a segment shape.
@@ -50,8 +51,8 @@ impl Shape {
     }
 
     /// Get the normal of a segment shape.
-    pub fn segment_normal(&self) -> sys::cpVect {
-        unsafe { sys::cpSegmentShapeGetNormal(self.0) }
+    pub fn segment_normal(&self) -> Vect {
+        unsafe { sys::cpSegmentShapeGetNormal(self.0) }.into()
     }
 
     /// Allocate and initialize a box shaped polygon shape.
@@ -64,9 +65,16 @@ impl Shape {
 
     /// Allocate and initialize a polygon shape with rounded corners.
     /// The vertexes must be convex with a counter-clockwise winding.
-    pub fn poly(body: &Body, verts: &[sys::cpVect], radius: f64) -> Shape {
+    pub fn poly(body: &Body, verts: &[Vect], radius: f64) -> Shape {
         Shape(
-            unsafe { sys::cpPolyShapeNewRaw(body.0, verts.len() as i32, verts.as_ptr(), radius) },
+            unsafe {
+                sys::cpPolyShapeNewRaw(
+                    body.0,
+                    verts.len() as i32,
+                    verts.as_ptr() as *const _ as *const sys::cpVect,
+                    radius,
+                )
+            },
             true,
         )
     }
@@ -111,8 +119,8 @@ impl Shape {
     }
 
     /// Get the centroid of this shape.
-    pub fn center_of_gravity(&self) -> sys::cpVect {
-        unsafe { sys::cpShapeGetCenterOfGravity(self.0) }
+    pub fn center_of_gravity(&self) -> Vect {
+        unsafe { sys::cpShapeGetCenterOfGravity(self.0) }.into()
     }
 
     // /// Get the bounding box that contains the shape given it's current position and angle.
@@ -149,13 +157,13 @@ impl Shape {
     }
 
     /// Get the surface velocity of this shape.
-    pub fn surface_velocity(&self) -> sys::cpVect {
-        unsafe { sys::cpShapeGetSurfaceVelocity(self.0) }
+    pub fn surface_velocity(&self) -> Vect {
+        unsafe { sys::cpShapeGetSurfaceVelocity(self.0) }.into()
     }
 
     /// Set the surface velocity of this shape.
-    pub fn set_surface_velocity(&mut self, surface_velocity: sys::cpVect) {
-        unsafe { sys::cpShapeSetSurfaceVelocity(self.0, surface_velocity) }
+    pub fn set_surface_velocity(&mut self, surface_velocity: Vect) {
+        unsafe { sys::cpShapeSetSurfaceVelocity(self.0, surface_velocity.0) }
     }
 
     // /// Get the user definable data pointer of this shape.

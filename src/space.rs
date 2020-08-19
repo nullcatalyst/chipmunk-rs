@@ -1,5 +1,6 @@
 extern crate chipmunk_sys as sys;
 
+use crate::vect::*;
 use crate::{Body, Shape};
 use std::ffi;
 
@@ -24,12 +25,12 @@ impl Space {
     }
 
     /// Gravity to pass to rigid bodies when integrating velocity.
-    pub fn gravity(&self) -> sys::cpVect {
-        unsafe { sys::cpSpaceGetGravity(self.0) }
+    pub fn gravity(&self) -> Vect {
+        unsafe { sys::cpSpaceGetGravity(self.0) }.into()
     }
 
-    pub fn set_gravity(&mut self, gravity: sys::cpVect) {
-        unsafe { sys::cpSpaceSetGravity(self.0, gravity) }
+    pub fn set_gravity(&mut self, gravity: Vect) {
+        unsafe { sys::cpSpaceSetGravity(self.0, gravity.0) }
     }
 
     /// Damping rate expressed as the fraction of velocity bodies retain each second.
