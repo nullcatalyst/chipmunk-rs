@@ -55,14 +55,6 @@ impl Shape {
         unsafe { sys::cpSegmentShapeGetNormal(self.0) }.into()
     }
 
-    /// Allocate and initialize a box shaped polygon shape.
-    pub fn poly_box(body: &Body, width: f64, height: f64, radius: f64) -> Shape {
-        Shape(
-            unsafe { sys::cpBoxShapeNew(body.0, width, height, radius) },
-            true,
-        )
-    }
-
     /// Allocate and initialize a polygon shape with rounded corners.
     /// The vertexes must be convex with a counter-clockwise winding.
     pub fn poly(body: &Body, verts: &[Vect], radius: f64) -> Shape {
@@ -75,6 +67,36 @@ impl Shape {
                     radius,
                 )
             },
+            true,
+        )
+    }
+
+    /// Allocate and initialize a box shaped polygon shape.
+    pub fn poly_box(body: &Body, width: f64, height: f64, radius: f64) -> Shape {
+        Shape(
+            unsafe { sys::cpBoxShapeNew(body.0, width, height, radius) },
+            true,
+        )
+    }
+
+    /// Allocate and initialize a box shaped polygon shape.
+    pub fn poly_box_with_transform(
+        body: &Body,
+        width: f64,
+        height: f64,
+        radius: f64,
+        offset: Vect,
+        angle: f64,
+    ) -> Shape {
+        let rotation = Vect::from_angle(angle);
+        let verts = [
+            (offset + Vect::new(-width, -height).rotate(rotation)).0,
+            (offset + Vect::new(width, -height).rotate(rotation)).0,
+            (offset + Vect::new(width, height).rotate(rotation)).0,
+            (offset + Vect::new(-width, height).rotate(rotation)).0,
+        ];
+        Shape(
+            unsafe { sys::cpPolyShapeNewRaw(body.0, 4, verts.as_ptr(), radius) },
             true,
         )
     }
