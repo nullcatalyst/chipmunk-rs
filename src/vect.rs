@@ -1,5 +1,6 @@
 extern crate chipmunk_sys as sys;
 
+use std::fmt;
 use std::ops::{Add, Mul, Neg, Sub};
 
 #[derive(Copy, Clone)]
@@ -20,7 +21,7 @@ impl Vect {
     pub fn from_angle(radians: f64) -> Vect {
         Vect(sys::cpVect {
             x: radians.cos(),
-            y: radians.cos(),
+            y: radians.sin(),
         })
     }
 
@@ -63,18 +64,18 @@ impl Vect {
     }
 
     /// Uses complex number multiplication to rotate v1 by v2. Scaling will occur if v1 is not a unit vector.
-    pub fn rotate(self, rotation: Vect) -> Vect {
+    pub fn rotate(self, v: Vect) -> Vect {
         Vect::new(
-            self.0.x * rotation.0.x - self.0.y * rotation.0.y,
-            self.0.x * rotation.0.y + self.0.y * rotation.0.x,
+            self.0.x * v.0.x - self.0.y * v.0.y,
+            self.0.x * v.0.y + self.0.y * v.0.x,
         )
     }
 
     /// Inverse of cpvrotate().
-    pub fn unrotate(self, rotation: Vect) -> Vect {
+    pub fn unrotate(self, v: Vect) -> Vect {
         Vect::new(
-            self.0.x * rotation.0.x + self.0.y * rotation.0.y,
-            self.0.y * rotation.0.x - self.0.x * rotation.0.y,
+            self.0.x * v.0.x + self.0.y * v.0.y,
+            self.0.y * v.0.x - self.0.x * v.0.y,
         )
     }
 
@@ -98,6 +99,21 @@ impl From<sys::cpVect> for Vect {
 impl From<Vect> for sys::cpVect {
     fn from(v: Vect) -> Self {
         v.0
+    }
+}
+
+impl Default for Vect {
+    fn default() -> Vect {
+        Vect::zero()
+    }
+}
+
+impl fmt::Debug for Vect {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("cpVect")
+            .field("x", &self.0.x)
+            .field("y", &self.0.y)
+            .finish()
     }
 }
 

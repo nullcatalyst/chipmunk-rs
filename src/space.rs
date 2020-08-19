@@ -3,12 +3,17 @@ extern crate chipmunk_sys as sys;
 use crate::vect::*;
 use crate::{Body, Shape};
 use std::ffi;
+use std::os::raw::c_void;
 
 pub struct Space(pub *mut sys::cpSpace, pub bool);
 
 unsafe impl Send for Space {}
 
 impl Space {
+    pub unsafe fn null() -> Space {
+        Space(std::ptr::null_mut(), false)
+    }
+
     pub fn new() -> Space {
         Space(unsafe { sys::cpSpaceNew() }, true)
     }
@@ -223,17 +228,53 @@ impl Space {
     // /// Query a space for any shapes overlapping the given shape and call @c func for each shape found.
     // CP_EXPORT cpBool cpSpaceShapeQuery(cpSpace *space, cpShape *shape, cpSpaceShapeQueryFunc func, void *data);
 
-    // //MARK: Iteration
+    //MARK: Iteration
 
-    // /// Space/body iterator callback function type.
-    // typedef void (*cpSpaceBodyIteratorFunc)(cpBody *body, void *data);
-    // /// Call @c func for each body in the space.
-    // CP_EXPORT void cpSpaceEachBody(cpSpace *space, cpSpaceBodyIteratorFunc func, void *data);
+    /// Call @c func for each body in the space.
+    pub fn each_body<F>(&mut self, callback: F)
+    where
+        F: Fn(Body),
+    {
+        unsafe {
+            extern "C" fn each_body<F>(body: *mut sys::cpBody, user_data: *mut c_void)
+            where
+                F: Fn(Body),
+            {
+                let callback = user_data as *mut _ as *mut F;
+                unsafe { (*callback)(Body(body, false)) };
+            }
 
-    // /// Space/body iterator callback function type.
-    // typedef void (*cpSpaceShapeIteratorFunc)(cpShape *shape, void *data);
-    // /// Call @c func for each shape in the space.
-    // CP_EXPORT void cpSpaceEachShape(cpSpace *space, cpSpaceShapeIteratorFunc func, void *data);
+            let mut callback_ref = callback;
+            sys::cpSpaceEachBody(
+                self.0,
+                Some(each_body::<F>),
+                &mut callback_ref as *mut _ as *mut c_void,
+            )
+        }
+    }
+
+    /// Call @c func for each shape in the space.
+    pub fn each_shape<F>(&mut self, callback: F)
+    where
+        F: Fn(Shape),
+    {
+        unsafe {
+            extern "C" fn each_shape<F>(shape: *mut sys::cpShape, user_data: *mut c_void)
+            where
+                F: Fn(Shape),
+            {
+                let callback = user_data as *mut _ as *mut F;
+                unsafe { (*callback)(Shape(shape, false)) };
+            }
+
+            let mut callback_ref = callback;
+            sys::cpSpaceEachShape(
+                self.0,
+                Some(each_shape::<F>),
+                &mut callback_ref as *mut _ as *mut c_void,
+            )
+        }
+    }
 
     // /// Space/constraint iterator callback function type.
     // typedef void (*cpSpaceConstraintIteratorFunc)(cpConstraint *constraint, void *data);

@@ -8,6 +8,10 @@ pub struct Body(pub *mut sys::cpBody, pub bool);
 unsafe impl Send for Body {}
 
 impl Body {
+    pub unsafe fn null() -> Body {
+        Body(std::ptr::null_mut(), false)
+    }
+
     pub fn new(mass: f64, moment: f64) -> Body {
         Body(unsafe { sys::cpBodyNew(mass, moment) }, true)
     }

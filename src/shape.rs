@@ -9,6 +9,10 @@ pub struct Shape(pub *mut sys::cpShape, pub bool);
 unsafe impl Send for Shape {}
 
 impl Shape {
+    pub unsafe fn null() -> Shape {
+        Shape(std::ptr::null_mut(), false)
+    }
+
     /// Allocate and initialize a circle shape.
     pub fn circle(body: &Body, radius: f64, offset: Vect) -> Shape {
         Shape(
@@ -88,13 +92,17 @@ impl Shape {
         offset: Vect,
         angle: f64,
     ) -> Shape {
+        let width = width / 2.0;
+        let height = height / 2.0;
         let rotation = Vect::from_angle(angle);
+
         let verts = [
-            (offset + Vect::new(-width, -height).rotate(rotation)).0,
-            (offset + Vect::new(width, -height).rotate(rotation)).0,
-            (offset + Vect::new(width, height).rotate(rotation)).0,
-            (offset + Vect::new(-width, height).rotate(rotation)).0,
+            (offset + rotation.rotate(Vect::new(-width, -height))).0,
+            (offset + rotation.rotate(Vect::new(width, -height))).0,
+            (offset + rotation.rotate(Vect::new(width, height))).0,
+            (offset + rotation.rotate(Vect::new(-width, height))).0,
         ];
+
         Shape(
             unsafe { sys::cpPolyShapeNewRaw(body.0, 4, verts.as_ptr(), radius) },
             true,
