@@ -90,6 +90,12 @@ impl Vect {
     }
 }
 
+impl Default for Vect {
+    fn default() -> Vect {
+        Vect::zero()
+    }
+}
+
 impl From<sys::cpVect> for Vect {
     fn from(v: sys::cpVect) -> Self {
         Vect(v)
@@ -99,12 +105,6 @@ impl From<sys::cpVect> for Vect {
 impl From<Vect> for sys::cpVect {
     fn from(v: Vect) -> Self {
         v.0
-    }
-}
-
-impl Default for Vect {
-    fn default() -> Vect {
-        Vect::zero()
     }
 }
 

@@ -5,8 +5,6 @@ use std::ffi;
 
 pub struct Body(pub *mut sys::cpBody, pub bool);
 
-unsafe impl Send for Body {}
-
 impl Body {
     pub unsafe fn null() -> Body {
         Body(std::ptr::null_mut(), false)
@@ -206,6 +204,14 @@ impl Body {
     // typedef void (*cpBodyArbiterIteratorFunc)(cpBody *body, cpArbiter *arbiter, void *data);
     // /// Call @c func once for each arbiter that is currently active on the body.
     // CP_EXPORT void cpBodyEachArbiter(cpBody *body, cpBodyArbiterIteratorFunc func, void *data);
+}
+
+unsafe impl Send for Body {}
+
+impl Default for Body {
+    fn default() -> Body {
+        Body(std::ptr::null_mut(), false)
+    }
 }
 
 impl Drop for Body {

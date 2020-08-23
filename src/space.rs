@@ -7,8 +7,6 @@ use std::os::raw::c_void;
 
 pub struct Space(pub *mut sys::cpSpace, pub bool);
 
-unsafe impl Send for Space {}
-
 impl Space {
     pub unsafe fn null() -> Space {
         Space(std::ptr::null_mut(), false)
@@ -298,6 +296,14 @@ impl Space {
     /// Step the space forward in time by @c dt.
     pub fn step(&mut self, dt: f64) {
         unsafe { sys::cpSpaceStep(self.0, dt) }
+    }
+}
+
+unsafe impl Send for Space {}
+
+impl Default for Space {
+    fn default() -> Space {
+        Space(std::ptr::null_mut(), false)
     }
 }
 

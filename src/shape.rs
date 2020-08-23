@@ -6,8 +6,6 @@ use std::ffi;
 
 pub struct Shape(pub *mut sys::cpShape, pub bool);
 
-unsafe impl Send for Shape {}
-
 impl Shape {
     pub unsafe fn null() -> Shape {
         Shape(std::ptr::null_mut(), false)
@@ -215,6 +213,14 @@ impl Shape {
     // CP_EXPORT cpShapeFilter cpShapeGetFilter(const cpShape *shape);
     // /// Set the collision filtering parameters of this shape.
     // CP_EXPORT void cpShapeSetFilter(cpShape *shape, cpShapeFilter filter);
+}
+
+unsafe impl Send for Shape {}
+
+impl Default for Shape {
+    fn default() -> Shape {
+        Shape(std::ptr::null_mut(), false)
+    }
 }
 
 impl Drop for Shape {
